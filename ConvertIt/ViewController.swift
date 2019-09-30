@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var formulaPicker: UIPickerView!
     
     
+    @IBOutlet weak var decimalSegment: UISegmentedControl!
     
     
     var formulaArray = ["miles to kilometers",
@@ -36,14 +37,17 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         formulaPicker.delegate = self
         formulaPicker.dataSource = self
+        conversionString = formulaArray[formulaPicker.selectedRow(inComponent: 0)]
         // Do any additional setup after loading the view.
     }
         
     func calculateConversion() {
-            
-            var outputValue = 0.0
-            
-            if let inputValue = Double(userInput.text!) {
+        guard let inputValue = Double(userInput.text!) else {
+            print("Show alert here to say the value entered was not a number")
+             return
+        }
+        
+                var outputValue = 0.0 
                 switch  conversionString {
                 case "miles to kilometers":
                     outputValue = inputValue / 0.62137
@@ -60,20 +64,32 @@ class ViewController: UIViewController {
                 default:
                     print("show alert - for some reason we didn't have a conversion string")
                 }
-                resultsLabel.text = "\(inputValue) \(fromUnits) = \(outputValue) \(toUnits)"
                 
-            } else {
-                print("Show alert here to say the value entered was not a number")
-            }
-            
-           
-        }
+                
+                 var  formatString = (decimalSegment.selectedSegmentIndex < decimalSegment.numberOfSegments ? "%.\(decimalSegment.numberOfSegments-1)f" : "%f")
+                
+                let outputString = String(format: formatString, outputValue)
         
-        
-        
+                resultsLabel.text = "\(inputValue) \(fromUnits) = \(outputValue) \(toUnits)"
+    }
+    
+    
+//        } else {
+//                print("Show alert here to say the value entered was not a number")
+//
+//
+//
+//        }
+    
+    
+    @IBAction func decimalSelected(_ sender: Any) {
+        calculateConversion()
+    }
+    
     
 
     @IBAction func convertButtonPressed(_ sender: UIButton) {
+        calculateConversion()
     }
     
 }
